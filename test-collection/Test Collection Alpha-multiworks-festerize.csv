@@ -1,0 +1,4 @@
+Item ARK,Parent ARK,Object Type,Title,File Name,Visibility,Genre,Repository,Date.creation,Date.normalized,Type.typeOfResource,Rights.copyrightStatus,Rights.servicesContact,Language,IIIF Object Type,viewingHint
+c0680a3d-2f36-4677-94cf-d75bc168701d,afcd1bf6-b130-4248-9ed1-415f31669bb6,Work,work3,,public,History,UCLA DL,"Jan 1, 2023",2023-01-01,book,public domain,Dawn Childress,English,Collection,multi-part
+0c5056ef-1c44-4bfd-b95f-77398d625626,afcd1bf6-b130-4248-9ed1-415f31669bb6,Work,work1,,public,History,UCLA DL,"Jan 1, 2023",2023-01-01,book,public domain,Dawn Childress,English,Collection,multi-part
+5ff131e8-52c4-4605-8d8a-245dafc3913d,afcd1bf6-b130-4248-9ed1-415f31669bb6,Work,work2,,public,History,UCLA DL,"Jan 1, 2023",2023-01-01,book,public domain,Dawn Childress,English,Collection,multi-part
