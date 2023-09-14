@@ -1,0 +1,4 @@
+Item ARK,Parent ARK,Object Type,Title,File Name,Visibility,Genre,Repository,Date.creation,Date.normalized,Type.typeOfResource,Rights.copyrightStatus,Rights.servicesContact,Language,IIIF Object Type,viewingHint
+09542c6f-902a-4989-be76-90345070de39,8c06e394-16b9-4039-8a9e-f168368c0ed4,,multi-work3,,vtest,gtest,rtest,dctest,dntest,ttest,rctest,rstest,ltest,Collection,multi-part
+17f4471c-33f3-49bd-9036-4032c1493351,8c06e394-16b9-4039-8a9e-f168368c0ed4,,multi-work2,,vtest,gtest,rtest,dctest,dntest,ttest,rctest,rstest,ltest,Collection,multi-part
+8c8fe8f9-356b-41b6-82f7-93fc0d5fd271,8c06e394-16b9-4039-8a9e-f168368c0ed4,,multi-work1,,vtest,gtest,rtest,dctest,dntest,ttest,rctest,rstest,ltest,Collection,multi-part
