@@ -81,51 +81,11 @@ def get_inputs(path):
         return title,defaults,vol_prefix,vol_defaults
 
 
-def build_row_dict(headers, data):
-    row_dict = {key:"" for key in headers}
-    for key,value in data.items():
-        row_dict[key] = value
-    return row_dict
-
-
-def proc_lvl3(path, title, work_ark):
-    files = list(os.scandir(path))
-    print(f"files={files}")
-    csv_path = os.path.join(path, f"{title}-works.csv")
-    headers = ALL_HEADERS + PAGE_HEADERS
-
-
-def proc_lvl2(path, title, multi_work_ark, vol_pre, vol_def):
-    dirs = [dir for dir in os.scandir(path) if dir.is_dir()]
-    print(f"dirs={dirs}")
-    csv_path = os.path.join(path, f"{title}-works.csv")
-    headers = ALL_HEADERS + VOL_HEADERS
-    works = []
-    with open(csv_path, "w") as csv_file:
-        writer = csv.DictWriter(csv_file, fieldnames=headers)
-        writer.writeheader()
-        for dir in dirs:
-            ark = uuid.uuid4()
-            data = {
-                "Item ARK": ark,
-                "Parent ARK": multi_work_ark,
-                "Object Type": "Work",
-                "Title": f"{vol_pre} {dir.name}"
-            }
-            data.update(vol_def)
-            writer.writerow(data)
-            works.append((dir, ark))
-    for dir,ark in works:
-        print(f"work path: {dir.path}")
-        proc_lvl3(dir.path, dir.name, ark)
-
-
-def proc_lvls0and1(path, title, defaults, vol_pre, vol_def):
-    # part 1: collection csv
-    csv_path = os.path.join(path, f"{title}-collection.csv")
-    collection_ark = uuid.uuid4() # TODO: replace uuid with real ARK
+def process_level0(root, title, defaults):
+    csv_path = os.path.join(root, f"{title}-collection.csv")
+    ark = uuid.uuid4()
     data = {
-        "Item ARK": collection_ark,
+        "Item ARK": ark,
         "Object Type": "Collection",
         "Title": title
     }
@@ -135,14 +95,14 @@ def proc_lvls0and1(path, title, defaults, vol_pre, vol_def):
         writer = csv.DictWriter(csv_file, fieldnames=headers)
         writer.writeheader()
         writer.writerow(data)
+    return ark
     
-    # part 2: works csv
-    print(f"path={path}")
-    dirs = [dir for dir in os.scandir(path) if dir.is_dir()]
-    print(f"works dirs={dirs}")
-    csv_path = os.path.join(path, f"{title}-multiworks-festerize.csv")
+
+def process_level1(root, title, collection_ark, defaults):
+    dirs = sorted([dir for dir in os.scandir(root) if dir.is_dir()], key=lambda x:x.name)
+    csv_path = os.path.join(root, f"{title}-multiworks-festerize.csv")
     headers = ALL_HEADERS + MULTI_HEADERS
-    multiworks = []
+    works = []
     with open(csv_path, "w") as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=headers)
         writer.writeheader()
@@ -158,15 +118,64 @@ def proc_lvls0and1(path, title, defaults, vol_pre, vol_def):
             }
             data.update(defaults)
             writer.writerow(data)
-            multiworks.append((dir,ark))
-    for dir,ark in multiworks:
-        print(f"multiwork path: {dir.path}")
-        #process level 2
-        proc_lvl2(dir.path, dir.name, ark, vol_pre, vol_def)
+            works.append((dir,ark))
+    return works
     
 
+def process_level2(root, title, works, vol_pre, vol_def):
+    csv_path = os.path.join(root, f"{title}-works.csv")
+    headers = ALL_HEADERS + VOL_HEADERS
+    volumes = []
+    with open(csv_path, "w") as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=headers)
+        writer.writeheader()
+        for work, work_ark in works:
+            dirs = sorted([dir for dir in os.scandir(work.path) if dir.is_dir()], key=lambda x:x.name)
+            for dir in dirs:
+                ark = uuid.uuid4()
+                data = {
+                    "Item ARK": ark,
+                    "Parent ARK": work_ark,
+                    "Object Type": "Work",
+                    "Title": f"{vol_pre} {dir.name}"
+                }
+                data.update(vol_def)
+                writer.writerow(data)
+                volumes.append((dir, ark))
+    return volumes
 
-def main():
+
+def process_level3(root, title, volumes):
+    csv_path = os.path.join(root, f"{title}-pages.csv")
+    headers = ALL_HEADERS + PAGE_HEADERS
+    with open(csv_path, "w") as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=headers)
+        writer.writeheader()
+        for vol, vol_ark in volumes:
+            files = sorted([file.name for file in os.scandir(vol.path) if file.is_file()])
+            for seq,file in enumerate(files, start=1):
+                ark = uuid.uuid4()
+                data = {
+                    "Item ARK": ark,
+                    "Parent ARK": vol_ark,
+                    "Object Type": "Page",
+                    "Title": f"{vol.name} {seq}",
+                    "File Name": os.path.join(vol.path, file),
+                    "Item Sequence": seq
+                }
+                writer.writerow(data)
+
+
+
+def main(root):
+    title, defaults, vpre, vdef = get_inputs(root)
+    collection_ark = process_level0(root, title, defaults)
+    works = process_level1(root, title, collection_ark, defaults)
+    volumes = process_level2(root, title, works, vpre, vdef)
+    process_level3(root, title, volumes)
+
+
+if __name__ == "__main__":
     parser  = argparse.ArgumentParser(
         prog='multipart',
         description='Generates CSVs at multiple levels for collections containing multi-part objects'
@@ -174,9 +183,4 @@ def main():
     parser.add_argument('path', help='the path to the collection')
     args = parser.parse_args()
     if check_inputs(args.path) is True:
-        coll_title,defaults,vol_prefix,vol_defaults = get_inputs(args.path)
-        proc_lvls0and1(args.path, coll_title, defaults, vol_prefix, vol_defaults)
-
-
-if __name__ == "__main__":
-    main()
+        main(args.path)
