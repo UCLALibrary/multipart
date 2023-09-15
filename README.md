@@ -3,6 +3,8 @@ A script for processing multipart collections into CSVs
 
 ## Installation
 
+        git clone git@github.com:UCLALibrary/multipart.git
+        cd multipart
         python -m venv ENV
         source ENV/bin/activate
         pip install -r requirements.txt
