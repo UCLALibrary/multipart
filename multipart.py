@@ -7,6 +7,7 @@ import yaml
 
 YAML_TEMPLATE = """
 Collection Title: 
+Collection ARK: 
 
 # Collection and Multipart Defaults
 Visibility: 
@@ -76,14 +77,16 @@ def get_inputs(path):
     with open(yaml_path, "r") as yaml_file:
         defaults = yaml.load(yaml_file, Loader=yaml.Loader)
         title = defaults.pop("Collection Title")
+        collection_ark = defaults.pop("Collection ARK")
         vol_prefix = defaults.pop("vol title prefix")
         vol_defaults = {k:defaults.pop(k) for k in VOL_HEADERS}
-        return title,defaults,vol_prefix,vol_defaults
+        return title,collection_ark,defaults,vol_prefix,vol_defaults
 
 
-def process_level0(root, title, defaults):
+def process_level0(root, title, ark, defaults):
     csv_path = os.path.join(root, f"{title}-collection.csv")
-    ark = uuid.uuid4()
+    if not ark:
+        ark = uuid.uuid4()
     data = {
         "Item ARK": ark,
         "Object Type": "Collection",
@@ -168,8 +171,8 @@ def process_level3(root, title, volumes):
 
 
 def main(root):
-    title, defaults, vpre, vdef = get_inputs(root)
-    collection_ark = process_level0(root, title, defaults)
+    title, collection_ark, defaults, vpre, vdef = get_inputs(root)
+    collection_ark = process_level0(root, title, collection_ark, defaults)
     works = process_level1(root, title, collection_ark, defaults)
     volumes = process_level2(root, title, works, vpre, vdef)
     process_level3(root, title, volumes)
