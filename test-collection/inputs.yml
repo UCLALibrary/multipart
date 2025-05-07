@@ -7,12 +7,24 @@ Genre: History
 Repository: UCLA DL
 Date.creation: Jan 1, 2023
 Date.normalized: 2023-01-01
-Type.typeOfResource: book
+Type.typeOfResource: image
 Rights.copyrightStatus: public domain
 Rights.servicesContact: Dawn Childress
 Language: English
+Collection Title: Test Collection
+Collection ARK: ark:/21198/z11h195q
 
 # Volume Defaults
-viewingHint: no hint
+vol title prefix: Vol.
+
+# Work Defaults
 Text direction: right-to-left
-vol title prefix: vol
+viewingHint: paged
+
+# Page Defaults
+page title prefix: Page
+
+# ARK credentials
+EZID Username: 
+EZID Password: 
+ARK Shoulder: 

@@ -17,3 +17,4 @@ Language: ltest
 viewingHint: vhtest
 Text direction: tdtest
 vol title prefix: vttest
+page title prefix: pttest
