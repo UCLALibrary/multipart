@@ -15,7 +15,7 @@ A script for processing multipart collections into CSVs
 
         python multiwork.py path/to/collection
 
-2. The script will look for an `inputs.yml` file in the root of the collection. If it doesn't exist, it will write a template file. Open it in your text editor and fill it out.
+2. The script will look for an `inputs.yml` file in the root of the collection. If it doesn't exist, it will write a template file. Open it in your text editor and fill it out. This is where the EZID credentials for ARK minting are added. (Considering changing this to input prompt.)
 
         vim path/to/collection/inputs.txt
 
